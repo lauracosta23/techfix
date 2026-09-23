@@ -1,0 +1,14 @@
+target/
+.settings/
+.classpath
+.factorypath
+*.log
+.env
+
+# ----- acrescentado para a publicacao -----
+.env.*
+!.env.example
+*.zip
+.DS_Store
+.idea/
+*.iml

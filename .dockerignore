@@ -1,0 +1,10 @@
+target/
+.git/
+.gitignore
+.settings/
+.classpath
+.project
+.factorypath
+*.log
+.env
+*.zip

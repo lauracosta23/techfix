@@ -1,0 +1,22 @@
+# =====================================================================
+#  Blueprint do Render - https://render.com/docs/blueprint-spec
+#  Publica site, API e Swagger em um unico servico web.
+# =====================================================================
+services:
+  - type: web
+    name: techfix
+    runtime: docker
+    plan: free
+    region: oregon
+    dockerfilePath: ./Dockerfile
+    healthCheckPath: /api/metricas
+    envVars:
+      # Valor NUNCA fica aqui: e preenchido a mao no painel do Render.
+      - key: GEMINI_API_KEY
+        sync: false
+      # Console do H2 desligado em producao (ver README, secao Deploy).
+      - key: H2_CONSOLE
+        value: "false"
+      # Sem SQL no log: o plano gratuito tem retencao curta de logs.
+      - key: SHOW_SQL
+        value: "false"

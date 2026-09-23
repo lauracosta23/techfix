@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-tema="claro">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TECHFIX — Tecnologia que entende o seu problema</title>
+<meta name="description" content="Assistência técnica de eletrônicos com triagem por inteligência artificial. Abra seu chamado e receba a classificação do problema em segundos.">
+<link rel="stylesheet" href="/assets/techfix.css">
+<style>
+/* ---------------- estilos exclusivos da home ---------------- */
+.heroi{position:relative;overflow:hidden;padding:clamp(56px,8vw,96px) 0 clamp(64px,9vw,110px)}
+.heroi::before{content:"";position:absolute;inset:-25% -10% auto;height:640px;background:var(--brilho);pointer-events:none}
+.bolha-luz{position:absolute;border-radius:50%;filter:blur(72px);opacity:.5;pointer-events:none;animation:flutua 9s ease-in-out infinite}
+.bolha-luz.a{width:330px;height:330px;background:#8B5CF6;top:-70px;right:4%}
+.bolha-luz.b{width:250px;height:250px;background:#A78BFA;bottom:-50px;left:-40px;animation-delay:2.2s}
+.heroi-grade{position:relative;display:grid;grid-template-columns:1.05fr .95fr;gap:clamp(28px,5vw,64px);align-items:center}
+.heroi h1{margin:8px 0 18px}
+.heroi .sub{font-size:1.09rem;margin-bottom:28px}
+.heroi-bts{display:flex;gap:12px;flex-wrap:wrap}
+.confianca{display:flex;gap:22px;flex-wrap:wrap;margin-top:32px;padding-top:26px;border-top:1px solid var(--borda)}
+.confianca div b{display:block;font-size:1.45rem;font-weight:780;letter-spacing:-.03em;
+  background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+.confianca div span{font-size:.79rem;color:var(--apagado)}
+
+/* painel do herói */
+.palco{position:relative;display:grid;place-items:center;min-height:400px}
+.palco-fundo{position:absolute;inset:8% 4%;background:var(--grad);border-radius:36px;opacity:.13;
+  filter:blur(2px);transform:rotate(-6deg)}
+.disp{position:relative;width:100%;max-width:400px;background:var(--superficie);border:1px solid var(--borda-forte);
+  border-radius:var(--r-xl);box-shadow:var(--sombra-3);overflow:hidden}
+.disp-top{display:flex;align-items:center;gap:7px;padding:13px 17px;border-bottom:1px solid var(--borda);
+  background:var(--superficie-2)}
+.disp-top i{width:9px;height:9px;border-radius:50%;background:var(--borda-forte)}
+.disp-top span{margin-left:8px;font-size:.76rem;color:var(--apagado);font-weight:600}
+.disp-corpo{padding:18px}
+.linha-ia{display:flex;gap:11px;margin-bottom:13px;align-items:flex-start}
+.av-mini{width:30px;height:30px;border-radius:9px;display:grid;place-items:center;flex:0 0 auto;
+  font-size:.68rem;font-weight:800;letter-spacing:-.02em}
+.av-mini.cli{background:var(--superficie-3);color:var(--texto-2)}
+.av-mini.ia{background:var(--grad);color:#fff}
+.av-mini svg{width:15px;height:15px}
+.fala{background:var(--superficie-2);border:1px solid var(--borda);border-radius:14px;
+  border-top-left-radius:5px;padding:10px 14px;font-size:.9rem;line-height:1.5}
+.fala.da-ia{background:var(--marca-suave);border-color:var(--borda-forte)}
+.campos-ia{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:15px}
+.campo-ia{background:var(--superficie-2);border:1px solid var(--borda);border-radius:12px;padding:10px 13px;
+  opacity:0;transform:translateY(8px);transition:opacity .45s,transform .45s}
+.campo-ia.on{opacity:1;transform:none}
+.campo-ia span{display:block;font-size:.67rem;text-transform:uppercase;letter-spacing:.1em;color:var(--apagado);
+  font-weight:700;margin-bottom:3px}
+.campo-ia b{font-size:.91rem;letter-spacing:-.01em}
+.campo-ia.larga{grid-column:1/-1}
+.proc{display:flex;align-items:center;gap:9px;font-size:.81rem;color:var(--marca);font-weight:600;
+  margin-top:14px;padding-top:13px;border-top:1px dashed var(--borda-forte)}
+
+/* serviços */
+.grade-serv{display:grid;grid-template-columns:repeat(auto-fit,minmax(248px,1fr));gap:18px;margin-top:38px}
+
+/* linha do tempo */
+.trilha{display:grid;grid-template-columns:repeat(6,1fr);gap:14px;margin-top:44px;position:relative}
+.trilha::before{content:"";position:absolute;left:5%;right:5%;top:23px;height:2px;
+  background:linear-gradient(90deg,var(--roxo-700),var(--lilas),var(--lavanda));opacity:.45;border-radius:2px}
+.passo{position:relative;text-align:center}
+.passo b{width:46px;height:46px;border-radius:50%;background:var(--superficie);border:2px solid var(--borda-forte);
+  display:grid;place-items:center;margin:0 auto 12px;font-size:.92rem;font-weight:780;color:var(--marca);
+  position:relative;z-index:1;transition:var(--t)}
+.passo:hover b{background:var(--grad);color:#fff;border-color:transparent;transform:scale(1.1)}
+.passo h4{font-size:.88rem;margin-bottom:4px;letter-spacing:-.01em}
+.passo p{font-size:.78rem;color:var(--apagado);line-height:1.45}
+
+/* abertura de chamado */
+.form-grade{display:grid;grid-template-columns:1.1fr .9fr;gap:24px;margin-top:38px;align-items:start}
+.resultado{border:1.5px solid var(--borda-forte);border-radius:var(--r-lg);overflow:hidden;
+  background:var(--superficie);box-shadow:var(--sombra-2)}
+.resultado-top{background:var(--grad);color:#fff;padding:16px 20px;display:flex;align-items:center;gap:10px}
+.resultado-top svg{width:18px;height:18px}
+.resultado-corpo{padding:20px}
+.res-linha{display:flex;justify-content:space-between;gap:14px;padding:11px 0;border-bottom:1px dashed var(--borda)}
+.res-linha:last-of-type{border-bottom:0}
+.res-linha span{color:var(--apagado);font-size:.86rem}
+.res-linha b{text-align:right;font-size:.91rem}
+.res-texto{background:var(--superficie-2);border-left:3px solid var(--marca);border-radius:0 12px 12px 0;
+  padding:14px 16px;margin:14px 0;font-size:.92rem;line-height:1.6;white-space:pre-wrap}
+.vazio-res{padding:44px 24px;text-align:center;color:var(--apagado)}
+.vazio-res svg{width:40px;height:40px;opacity:.3;margin:0 auto 12px}
+
+/* dúvidas */
+.faq{max-width:780px;margin:38px auto 0}
+.faq details{background:var(--superficie);border:1px solid var(--borda);border-radius:var(--r);
+  margin-bottom:10px;overflow:hidden;transition:var(--t)}
+.faq details[open]{border-color:var(--borda-forte);box-shadow:var(--sombra-2)}
+.faq summary{padding:16px 20px;cursor:pointer;font-weight:620;font-size:.97rem;list-style:none;
+  display:flex;align-items:center;gap:12px}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary::after{content:"";margin-left:auto;width:9px;height:9px;flex:0 0 auto;
+  border-right:2px solid var(--marca);border-bottom:2px solid var(--marca);transform:rotate(45deg);
+  transition:transform var(--t)}
+.faq details[open] summary::after{transform:rotate(-135deg)}
+.faq p{padding:0 20px 18px;color:var(--apagado);font-size:.93rem}
+
+/* rodapé */
+.rodape{background:var(--roxo-900);color:#EDE9FE;padding:52px 0 26px;margin-top:20px}
+:root[data-tema="escuro"] .rodape{background:#0A0614}
+.rodape-grade{display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr;gap:30px}
+.rodape h5{font-size:.76rem;text-transform:uppercase;letter-spacing:.11em;color:var(--lilas);margin:0 0 13px}
+.rodape a,.rodape p{color:#C9BEE8;text-decoration:none;font-size:.89rem;display:block;margin-bottom:8px;
+  transition:var(--t)}
+.rodape a:hover{color:#fff}
+.rodape-fim{border-top:1px solid rgba(221,214,254,.14);margin-top:34px;padding-top:20px;
+  display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap;font-size:.81rem;color:#9C8FC0}
+.selo-academico{display:inline-flex;align-items:center;gap:7px;background:rgba(167,139,250,.14);
+  border:1px solid rgba(167,139,250,.3);color:#DDD6FE;border-radius:99px;padding:5px 12px;font-size:.75rem}
+
+@media(max-width:980px){
+  .heroi-grade{grid-template-columns:1fr}
+  .palco{min-height:auto;margin-top:12px}
+  .form-grade{grid-template-columns:1fr}
+  .trilha{grid-template-columns:repeat(3,1fr);row-gap:26px}
+  .trilha::before{display:none}
+  .rodape-grade{grid-template-columns:1fr 1fr}
+}
+@media(max-width:560px){
+  .trilha{grid-template-columns:1fr 1fr}
+  .campos-ia{grid-template-columns:1fr}
+  .rodape-grade{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<!-- ======================================================== TOPO -->
+<header class="topo">
+  <div class="envolve topo-int">
+    <a class="marca" href="/">
+      <span class="marca-icone"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg></span>
+      TECH<em>FIX</em>
+    </a>
+    <nav class="nav">
+      <a href="#ia">Inteligência</a>
+      <a href="#servicos">Serviços</a>
+      <a href="#processo">Como funciona</a>
+      <a href="#abrir">Abrir chamado</a>
+      <a href="#duvidas">Dúvidas</a>
+    </nav>
+    <div class="topo-dir">
+      <button class="bt bt-icone" data-acao="tema" title="Alternar tema"></button>
+      <a class="bt bt-2" href="/painel.html">Painel interno</a>
+      <a class="bt bt-1" href="#abrir">Abrir chamado
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </a>
+    </div>
+  </div>
+</header>
+
+<!-- ======================================================== HERÓI -->
+<section class="heroi">
+  <span class="bolha-luz a"></span><span class="bolha-luz b"></span>
+  <div class="envolve heroi-grade">
+    <div>
+      <span class="olho">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M12 3l1.9 4.8L18.7 9.7l-4.8 1.9L12 16.4l-1.9-4.8L5.3 9.7l4.8-1.9z"/></svg>
+        Triagem por inteligência artificial
+      </span>
+      <h1>Tecnologia que <span class="grad-txt">entende o seu problema</span>.</h1>
+      <p class="sub">Abra um chamado, descreva o problema do seu equipamento e deixe nossa inteligência artificial ajudar na triagem e classificação.</p>
+      <div class="heroi-bts">
+        <a class="bt bt-1" href="#abrir">Abrir chamado
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </a>
+        <a class="bt bt-2" href="#consultar">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+          Consultar chamado
+        </a>
+      </div>
+      <div class="confianca">
+        <div><b>&lt; 5s</b><span>para a triagem automática</span></div>
+        <div><b>6</b><span>tipos de equipamento atendidos</span></div>
+        <div><b>24h</b><span>abertura de chamado online</span></div>
+      </div>
+    </div>
+
+    <!-- painel animado do herói -->
+    <div class="palco">
+      <span class="palco-fundo"></span>
+      <div class="disp">
+        <div class="disp-top"><i></i><i></i><i></i><span>techfix · triagem em tempo real</span></div>
+        <div class="disp-corpo">
+          <div class="linha-ia">
+            <span class="av-mini cli">VC</span>
+            <div class="fala" id="falaCliente">Meu notebook liga, mas a tela fica preta.</div>
+          </div>
+          <div class="linha-ia">
+            <span class="av-mini ia"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M12 3l1.9 4.8L18.7 9.7l-4.8 1.9L12 16.4l-1.9-4.8L5.3 9.7l4.8-1.9z"/></svg></span>
+            <div class="fala da-ia" id="falaIa">Entendi. Vou analisar o problema.</div>
+          </div>
+          <div class="campos-ia" id="camposIa">
+            <div class="campo-ia"><span>Equipamento</span><b>Notebook</b></div>
+            <div class="campo-ia"><span>Categoria</span><b>Problema de vídeo</b></div>
+            <div class="campo-ia"><span>Prioridade</span><b>Média</b></div>
+            <div class="campo-ia"><span>Status</span><b>Aguardando diagnóstico</b></div>
+            <div class="campo-ia larga"><span>Análise</span><b style="font-weight:500;line-height:1.5">Possível falha relacionada ao sistema de vídeo ou display.</b></div>
+          </div>
+          <div class="proc" id="proc">
+            <span class="pontos"><i></i><i></i><i></i></span>
+            <span id="procTxt">Processando com a TECHFIX AI…</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ======================================================== IA -->
+<section class="secao" id="ia" style="background:var(--grad-suave);border-block:1px solid var(--borda)">
+  <div class="envolve">
+    <div class="centro rev">
+      <span class="olho">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="7" width="16" height="13" rx="3"/><path d="M12 3v4M9 12v2M15 12v2"/></svg>
+        A inteligência por trás do atendimento
+      </span>
+      <h2>Seu problema. <span class="grad-txt">Nossa inteligência.</span></h2>
+      <p class="sub" style="margin-top:14px">Você escreve com as suas palavras. A TECHFIX AI interpreta, classifica a categoria e a prioridade, e entrega o chamado pronto para o técnico — antes de qualquer pessoa ler.</p>
+    </div>
+
+    <div class="grade-serv" style="grid-template-columns:repeat(auto-fit,minmax(272px,1fr));margin-top:42px">
+      <div class="cartao cartao-hover rev">
+        <span class="icone-caixa"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></span>
+        <h3>Entende linguagem natural</h3>
+        <p class="sub" style="font-size:.92rem;margin-top:7px">Não existe formulário com cem campos. Você conta o que houve como contaria a um amigo, e o sistema extrai o que importa.</p>
+      </div>
+      <div class="cartao cartao-hover rev">
+        <span class="icone-caixa"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M7 15l4-4 3 3 5-6"/></svg></span>
+        <h3>Classifica em duas frentes</h3>
+        <p class="sub" style="font-size:.92rem;margin-top:7px">Um classificador por regras e a IA analisam o mesmo texto de forma independente. Quando os dois concordam, a triagem entra com alta confiança.</p>
+      </div>
+      <div class="cartao cartao-hover rev">
+        <span class="icone-caixa"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h8l-1 8 10-12h-8z"/></svg></span>
+        <h3>Responde em milissegundos</h3>
+        <p class="sub" style="font-size:.92rem;margin-top:7px">Problemas parecidos já respondidos voltam do cache instantaneamente. E se a IA ficar fora do ar, o chamado é registrado mesmo assim — nada se perde.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ======================================================== SERVIÇOS -->
+<section class="secao" id="servicos">
+  <div class="envolve">
+    <div class="centro rev">
+      <span class="olho">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
+        O que consertamos
+      </span>
+      <h2>Um time para cada equipamento</h2>
+      <p class="sub" style="margin-top:14px">Diagnóstico, orçamento sem compromisso e peças com procedência.</p>
+    </div>
+
+    <div class="grade-serv">
+      <div class="cartao cartao-hover rev">
+        <span class="icone-caixa"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="2" width="12" height="20" rx="3"/><path d="M11 18h2"/></svg></span>
+        <h3>Celulares</h3>
+        <p class="sub" style="font-size:.9rem;margin-top:6px">Troca de tela, bateria, conector de carga, alto-falante e recuperação depois de queda ou contato com água.</p>
+      </div>
+      <div class="cartao cartao-hover rev">
+        <span class="icone-caixa"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M2 20h20"/></svg></span>
+        <h3>Notebooks</h3>
+        <p class="sub" style="font-size:.9rem;margin-top:6px">Não liga, superaquecimento, dobradiça, teclado, troca de display e upgrade de memória ou SSD.</p>
+      </div>
+      <div class="cartao cartao-hover rev">
+        <span class="icone-caixa"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg></span>
+        <h3>Computadores</h3>
+        <p class="sub" style="font-size:.9rem;margin-top:6px">Lentidão, vírus, fonte queimada, limpeza interna, formatação com backup e montagem sob medida.</p>
+      </div>
+      <div class="cartao cartao-hover rev">
+        <span class="icone-caixa"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M6 11h4M8 9v4M15 12h.01M18 10h.01"/><rect x="2" y="6" width="20" height="12" rx="5"/></svg></span>
+        <h3>Videogames</h3>
+        <p class="sub" style="font-size:.9rem;margin-top:6px">Console que desliga sozinho, leitor de disco, troca de pasta térmica e reparo de controles.</p>
+      </div>
+      <div class="cartao cartao-hover rev">
+        <span class="icone-caixa"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9V3h12v6"/><rect x="3" y="9" width="18" height="7" rx="2"/><path d="M7 16h10v5H7z"/></svg></span>
+        <h3>Impressoras</h3>
+        <p class="sub" style="font-size:.9rem;margin-top:6px">Atolamento de papel, cabeçote entupido, falha de rede e manutenção preventiva.</p>
+      </div>
+      <div class="cartao cartao-hover rev">
+        <span class="icone-caixa"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="14" rx="2"/><path d="M8 21h8"/></svg></span>
+        <h3>Smart TVs</h3>
+        <p class="sub" style="font-size:.9rem;margin-top:6px">Sem imagem, sem som, falha no painel, troca de placa e problemas de conexão com a internet.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ======================================================== PROCESSO -->
+<section class="secao" id="processo" style="background:var(--superficie-2);border-block:1px solid var(--borda)">
+  <div class="envolve">
+    <div class="centro rev">
+      <span class="olho">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+        Do chamado à entrega
+      </span>
+      <h2>Como funciona</h2>
+      <p class="sub" style="margin-top:14px">Seis etapas, e você acompanha todas elas.</p>
+    </div>
+    <div class="trilha">
+      <div class="passo rev"><b>1</b><h4>Chamado aberto</h4><p>Você descreve o problema em texto livre.</p></div>
+      <div class="passo rev"><b>2</b><h4>Análise IA</h4><p>Categoria e prioridade definidas na hora.</p></div>
+      <div class="passo rev"><b>3</b><h4>Diagnóstico</h4><p>O técnico confirma a causa no equipamento.</p></div>
+      <div class="passo rev"><b>4</b><h4>Orçamento</h4><p>Valor fechado antes de qualquer reparo.</p></div>
+      <div class="passo rev"><b>5</b><h4>Reparo</h4><p>Execução com peças de procedência.</p></div>
+      <div class="passo rev"><b>6</b><h4>Finalizado</h4><p>Testes, entrega e garantia registrada.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ======================================================== ABRIR CHAMADO -->
+<section class="secao" id="abrir">
+  <div class="envolve">
+    <div class="centro rev">
+      <span class="olho">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+        Leva menos de um minuto
+      </span>
+      <h2>Abra seu chamado</h2>
+      <p class="sub" style="margin-top:14px">Conte para a TECHFIX o que aconteceu com seu equipamento.</p>
+    </div>
+
+    <div class="form-grade">
+      <!-- formulário -->
+      <form class="cartao rev" id="formChamado" style="padding:28px">
+        <div class="par">
+          <div class="campo">
+            <label for="fNome">Seu nome</label>
+            <input id="fNome" placeholder="Como podemos te chamar?" autocomplete="name" required>
+          </div>
+          <div class="campo">
+            <label for="fEmail">Seu e-mail</label>
+            <input id="fEmail" type="email" placeholder="voce@email.com" autocomplete="email" required>
+          </div>
+        </div>
+
+        <div class="campo">
+          <label>Qual equipamento?</label>
+          <div class="escolhas" id="escolhas">
+            <button type="button" class="escolha" data-eq="Celular" aria-pressed="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><rect x="6" y="2" width="12" height="20" rx="3"/><path d="M11 18h2"/></svg>Celular</button>
+            <button type="button" class="escolha" data-eq="Notebook" aria-pressed="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M2 20h20"/></svg>Notebook</button>
+            <button type="button" class="escolha" data-eq="Computador" aria-pressed="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>Computador</button>
+            <button type="button" class="escolha" data-eq="Videogame" aria-pressed="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><path d="M6 11h4M8 9v4M15 12h.01M18 10h.01"/><rect x="2" y="6" width="20" height="12" rx="5"/></svg>Videogame</button>
+            <button type="button" class="escolha" data-eq="Impressora" aria-pressed="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><path d="M6 9V3h12v6"/><rect x="3" y="9" width="18" height="7" rx="2"/><path d="M7 16h10v5H7z"/></svg>Impressora</button>
+            <button type="button" class="escolha" data-eq="Smart TV" aria-pressed="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><rect x="2" y="4" width="20" height="14" rx="2"/><path d="M8 21h8"/></svg>Smart TV</button>
+          </div>
+          <div class="dica">O equipamento entra no começo da descrição enviada para a triagem.</div>
+        </div>
+
+        <div class="campo">
+          <label for="fTexto">O que está acontecendo?</label>
+          <textarea id="fTexto" placeholder="Ex.: meu notebook liga, mas a tela fica preta desde ontem. É urgente, preciso dele para trabalhar." required></textarea>
+          <div class="dica"><span id="contador">0</span>/4000 caracteres · Ctrl + Enter envia</div>
+        </div>
+
+        <div class="campo">
+          <label>Foto do problema <span style="font-weight:450;color:var(--apagado)">(opcional)</span></label>
+          <div class="solta" id="solta">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M17 8l-5-5-5 5M12 3v12"/></svg>
+            Arraste a imagem aqui ou clique para escolher<br><small style="opacity:.75">JPG ou PNG, até 8 MB</small>
+          </div>
+          <input type="file" id="fFoto" accept="image/*" hidden>
+        </div>
+
+        <button class="bt bt-1 bt-g" id="btAnalisar" type="submit" style="margin-top:6px;padding:14px">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M12 3l1.9 4.8L18.7 9.7l-4.8 1.9L12 16.4l-1.9-4.8L5.3 9.7l4.8-1.9z"/></svg>
+          Analisar problema com IA
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </button>
+      </form>
+
+      <!-- resultado -->
+      <div class="rev">
+        <div class="resultado" id="resultado">
+          <div class="resultado-top">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M12 3l1.9 4.8L18.7 9.7l-4.8 1.9L12 16.4l-1.9-4.8L5.3 9.7l4.8-1.9z"/></svg>
+            <b>Análise TECHFIX AI</b>
+          </div>
+          <div id="resCorpo">
+            <div class="vazio-res">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"><path d="M12 3l1.9 4.8L18.7 9.7l-4.8 1.9L12 16.4l-1.9-4.8L5.3 9.7l4.8-1.9z"/></svg>
+              <b style="display:block;color:var(--texto);margin-bottom:5px">A análise aparece aqui</b>
+              Preencha o formulário ao lado e a triagem sai em segundos.
+            </div>
+          </div>
+        </div>
+
+        <!-- consultar -->
+        <div class="cartao" id="consultar" style="margin-top:18px">
+          <h3 style="display:flex;align-items:center;gap:9px;margin-bottom:6px">
+            <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="var(--marca)" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+            Consultar chamado
+          </h3>
+          <p class="sub" style="font-size:.88rem;margin-bottom:14px">Informe o número do protocolo que você recebeu.</p>
+          <form id="formConsulta" style="display:flex;gap:9px">
+            <input id="fProto" placeholder="Ex.: TF-0001 ou 1" style="flex:1">
+            <button class="bt bt-2" type="submit">Buscar</button>
+          </form>
+          <div id="resConsulta" style="margin-top:14px"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ======================================================== DÚVIDAS -->
+<section class="secao" id="duvidas" style="background:var(--superficie-2);border-block:1px solid var(--borda)">
+  <div class="envolve">
+    <div class="centro rev">
+      <span class="olho">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M9.5 9a2.6 2.6 0 0 1 5 1c0 1.7-2.5 2-2.5 3.5M12 17.5v.01"/></svg>
+        Dúvidas frequentes
+      </span>
+      <h2>Antes de abrir o chamado</h2>
+    </div>
+    <div class="faq rev">
+      <details open><summary>A inteligência artificial substitui o técnico?</summary>
+        <p>Não. Ela faz a triagem: lê a sua descrição, define a categoria e a prioridade e organiza a fila. O diagnóstico, o orçamento e o reparo continuam sendo feitos por uma pessoa, com o equipamento em mãos.</p></details>
+      <details><summary>Preciso saber o nome técnico do defeito?</summary>
+        <p>Não. Escreva com as suas palavras, do jeito que você contaria para alguém. É justamente isso que o sistema foi feito para entender.</p></details>
+      <details><summary>Quanto custa o conserto?</summary>
+        <p>O orçamento depende do modelo do aparelho e da peça, e é passado depois do diagnóstico, sem compromisso. O sistema nunca informa preço automaticamente — nenhum valor é estimado por inteligência artificial.</p></details>
+      <details><summary>Para que serve a foto do problema?</summary>
+        <p>A imagem ajuda a triagem a entender danos visíveis, como tela trincada ou conector danificado. Ela é analisada e descrita, mas não fica armazenada no sistema — só a descrição é guardada.</p></details>
+      <details><summary>Vocês fazem reconhecimento facial nas fotos?</summary>
+        <p>Não, por decisão de projeto. Rosto é dado biométrico, considerado sensível pela LGPD, e não é necessário para consertar um aparelho. A análise se limita ao equipamento.</p></details>
+      <details><summary>E se a inteligência artificial estiver fora do ar?</summary>
+        <p>O chamado é registrado do mesmo jeito e entra na fila para triagem manual. Nenhuma solicitação se perde por causa de indisponibilidade do serviço de IA.</p></details>
+    </div>
+  </div>
+</section>
+
+<!-- ======================================================== RODAPÉ -->
+<footer class="rodape">
+  <div class="envolve">
+    <div class="rodape-grade">
+      <div>
+        <a class="marca" href="/" style="color:#fff;margin-bottom:14px">
+          <span class="marca-icone"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg></span>
+          TECH<em style="color:var(--lilas)">FIX</em>
+        </a>
+        <p style="max-width:34ch">Assistência técnica de eletrônicos com triagem por inteligência artificial.</p>
+        <span class="selo-academico">
+          <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 10L12 5 2 10l10 5 10-5z"/><path d="M6 12v5c0 1 3 3 6 3s6-2 6-3v-5"/></svg>
+          Projeto acadêmico · empresa fictícia
+        </span>
+      </div>
+      <div>
+        <h5>Serviços</h5>
+        <a href="#servicos">Celulares</a><a href="#servicos">Notebooks</a>
+        <a href="#servicos">Computadores</a><a href="#servicos">Smart TVs</a>
+      </div>
+      <div>
+        <h5>Atendimento</h5>
+        <a href="#abrir">Abrir chamado</a><a href="#consultar">Consultar chamado</a>
+        <a href="#duvidas">Dúvidas frequentes</a><a href="/painel.html">Painel interno</a>
+      </div>
+      <div>
+        <h5>Sistema</h5>
+        <a href="/swagger-ui.html" target="_blank">Documentação da API</a>
+        <a href="/h2-console" target="_blank">Banco de dados</a>
+        <p style="font-size:.8rem;margin-top:12px;line-height:1.5">Não realizamos reconhecimento facial. Imagens não são armazenadas — apenas a descrição gerada.</p>
+      </div>
+    </div>
+    <div class="rodape-fim">
+      <span>TECHFIX · Senac · Módulo 10 — Tecnologias Emergentes e IA · Aula 08</span>
+      <span>Timbó / SC · Segunda a sexta, 8h às 18h</span>
+    </div>
+  </div>
+</footer>
+
+<script src="/assets/techfix.js"></script>
+<script>
+(function(){
+  const T = window.TECHFIX, $ = T.$;
+  T.iniciar();
+
+  /* ---------- animação do painel do herói (ilustrativa) ---------- */
+  (function heroi(){
+    const campos = T.$$('#camposIa .campo-ia');
+    let i = 0;
+    const tick = () => {
+      if (i < campos.length){ campos[i].classList.add('on'); i++; setTimeout(tick, 420); }
+      else { $('#proc').innerHTML = '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg> Triagem concluída · exemplo ilustrativo'; }
+    };
+    setTimeout(tick, 900);
+  })();
+
+  /* ---------- seleção de equipamento ---------- */
+  let equipamento = '';
+  $('#escolhas').addEventListener('click', ev => {
+    const b = ev.target.closest('.escolha'); if (!b) return;
+    T.$$('#escolhas .escolha').forEach(x => x.setAttribute('aria-pressed', 'false'));
+    b.setAttribute('aria-pressed', 'true');
+    equipamento = b.dataset.eq;
+  });
+
+  /* ---------- contador ---------- */
+  $('#fTexto').addEventListener('input', e => {
+    $('#contador').textContent = e.target.value.length;
+    e.target.classList.toggle('erro', e.target.value.length > 4000);
+  });
+  $('#fTexto').addEventListener('keydown', e => {
+    if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) $('#formChamado').requestSubmit();
+  });
+
+  /* ---------- foto ---------- */
+  const solta = $('#solta'), inFoto = $('#fFoto');
+  solta.onclick = () => inFoto.click();
+  solta.ondragover = e => { e.preventDefault(); solta.classList.add('sobre'); };
+  solta.ondragleave = () => solta.classList.remove('sobre');
+  solta.ondrop = e => { e.preventDefault(); solta.classList.remove('sobre'); inFoto.files = e.dataTransfer.files; previa(); };
+  inFoto.onchange = previa;
+  function previa(){
+    const f = inFoto.files[0]; if (!f) return;
+    solta.innerHTML = '<img src="' + URL.createObjectURL(f) + '" alt="prévia">' +
+      '<div style="margin-top:10px;font-size:.84rem">' + T.escapar(f.name) + ' · ' + (f.size/1024).toFixed(0) + ' KB</div>';
+  }
+
+  /* ---------- cartão de resultado ---------- */
+  function pintarResultado(t, eq){
+    const s = T.situacao(t), ok = T.concorda(t);
+    $('#resCorpo').innerHTML =
+      '<div class="resultado-corpo">' +
+        '<div class="res-linha"><span>Protocolo</span><b class="mono">' + T.protocolo(t.id) + '</b></div>' +
+        (eq ? '<div class="res-linha"><span>Equipamento</span><b>' + T.escapar(eq) + '</b></div>' : '') +
+        '<div class="res-linha"><span>Categoria</span><b>' + T.escapar(t.categoriaIa || t.categoriaRegras || '-') + '</b></div>' +
+        '<div class="res-linha"><span>Prioridade</span><b><span class="tag tag-v ' + t.prioridade + '">' + t.prioridade + '</span></b></div>' +
+        '<div class="res-linha"><span>Situação</span><b style="color:' + s.cor + '">' + s.txt + '</b></div>' +
+        '<div class="res-texto">' + T.escapar(t.resposta || 'Chamado registrado. Um técnico fará a triagem.') + '</div>' +
+        '<div class="res-linha"><span>Origem da resposta</span><b><span class="tag ' + t.origem + '">' + t.origem + '</span></b></div>' +
+        '<div class="res-linha"><span>Tempo de resposta</span><b class="num">' + t.tempoMs + ' ms</b></div>' +
+        (t.categoriaIa ? '<div class="res-linha"><span>Regras e IA</span><b style="color:' + (ok ? 'var(--ok)' : 'var(--fallback)') + '">' + (ok ? 'concordaram' : 'divergiram') + '</b></div>' : '') +
+        (t.descricaoAnexo ? '<div class="res-texto" style="border-left-color:var(--lilas)"><b>Imagem: </b>' + T.escapar(t.descricaoAnexo) + '</div>' : '') +
+        '<button class="bt bt-1 bt-g" style="margin-top:16px" id="btAcompanhar">Acompanhar chamado</button>' +
+      '</div>';
+    $('#btAcompanhar').onclick = () => {
+      $('#fProto').value = T.protocolo(t.id).replace('#','');
+      $('#formConsulta').requestSubmit();
+      $('#consultar').scrollIntoView({ behavior:'smooth', block:'center' });
+    };
+  }
+
+  /* ---------- abrir chamado ---------- */
+  $('#formChamado').addEventListener('submit', async ev => {
+    ev.preventDefault();
+    const nome = $('#fNome').value.trim(), email = $('#fEmail').value.trim(), desc = $('#fTexto').value.trim();
+    if (!nome || !email || !desc) return T.avisar('Preencha nome, e-mail e a descrição do problema.', true);
+
+    const bt = $('#btAnalisar'), htmlOriginal = bt.innerHTML;
+    bt.disabled = true;
+    bt.innerHTML = '<span class="giro"></span> Analisando com a TECHFIX AI…';
+    $('#resCorpo').innerHTML = '<div class="resultado-corpo">' +
+      '<div class="esqueleto" style="height:16px;width:55%;margin-bottom:11px"></div>' +
+      '<div class="esqueleto" style="height:16px;width:80%;margin-bottom:11px"></div>' +
+      '<div class="esqueleto" style="height:64px"></div></div>';
+
+    try {
+      const cliente = await T.garantirCliente(nome, email);
+      const texto = (equipamento ? equipamento + ' — ' : '') + desc;
+      let t = await T.api('/api/tickets', 'POST', { usuarioId: cliente.id, texto: texto });
+
+      if (inFoto.files[0]) {
+        try {
+          const fd = new FormData(); fd.append('imagem', inFoto.files[0]);
+          t = await T.api('/api/tickets/' + t.id + '/foto', 'POST', null, fd);
+        } catch (e) { T.avisar('O chamado foi aberto, mas a imagem falhou: ' + e.message, true); }
+      }
+
+      pintarResultado(t, equipamento);
+      T.avisar('Chamado ' + T.protocolo(t.id) + ' aberto com sucesso.');
+      $('#fTexto').value = ''; $('#contador').textContent = '0';
+    } catch (e) {
+      $('#resCorpo').innerHTML = '<div class="vazio-res"><b style="display:block;color:var(--alta);margin-bottom:6px">Não foi possível concluir</b>' + T.escapar(e.message) + '</div>';
+      T.avisar(e.message, true);
+    } finally {
+      bt.disabled = false; bt.innerHTML = htmlOriginal;
+    }
+  });
+
+  /* ---------- consultar chamado ---------- */
+  $('#formConsulta').addEventListener('submit', async ev => {
+    ev.preventDefault();
+    const id = ($('#fProto').value.match(/\d+/) || [''])[0];
+    if (!id) return T.avisar('Informe o número do protocolo, por exemplo TF-0001.', true);
+    $('#resConsulta').innerHTML = '<div class="esqueleto" style="height:70px"></div>';
+    try {
+      const t = await T.api('/api/tickets/' + Number(id));
+      const s = T.situacao(t);
+      $('#resConsulta').innerHTML =
+        '<div style="border:1px solid var(--borda-forte);border-radius:14px;padding:15px;background:var(--superficie-2)">' +
+          '<div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:9px">' +
+            '<b class="mono">' + T.protocolo(t.id) + '</b>' +
+            '<span class="tag ' + t.origem + '">' + t.origem + '</span>' +
+            '<span class="tag tag-v ' + t.prioridade + '">' + t.prioridade + '</span>' +
+            '<span style="margin-left:auto;font-size:.79rem;color:var(--apagado)">' + T.quando(t.dataHora) + '</span>' +
+          '</div>' +
+          '<div style="font-weight:600;margin-bottom:6px">' + T.escapar(t.texto) + '</div>' +
+          '<div style="font-size:.9rem;color:var(--apagado);line-height:1.55">' + T.escapar(t.resposta || '') + '</div>' +
+          '<div style="margin-top:10px;font-size:.82rem;color:' + s.cor + ';font-weight:650">' + s.txt + '</div>' +
+        '</div>';
+    } catch (e) {
+      $('#resConsulta').innerHTML = '<div style="color:var(--alta);font-size:.89rem">' + T.escapar(e.message) + '</div>';
+    }
+  });
+
+  /* o chat flutuante avisa a home quando abre um chamado */
+  T.aoAbrirChamado = t => pintarResultado(t, '');
+})();
+</script>
+</body>
+</html>

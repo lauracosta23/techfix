@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-tema="claro">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Painel · TECHFIX</title>
+<link rel="stylesheet" href="/assets/techfix.css">
+<style>
+body{background:var(--bg)}
+.app{display:grid;grid-template-columns:250px 1fr;min-height:100vh}
+
+/* ---------------- menu lateral ---------------- */
+.lateral{background:var(--superficie);border-right:1px solid var(--borda);padding:20px 14px;
+  display:flex;flex-direction:column;gap:5px;position:sticky;top:0;height:100vh;overflow-y:auto}
+.lateral .marca{padding:0 8px 20px;font-size:1.06rem}
+.menu-tit{font-size:.68rem;text-transform:uppercase;letter-spacing:.12em;color:var(--apagado);
+  font-weight:750;padding:16px 12px 7px}
+.item{display:flex;align-items:center;gap:11px;padding:10px 12px;border-radius:11px;cursor:pointer;
+  border:0;background:transparent;font:inherit;font-size:.92rem;font-weight:550;color:var(--texto-2);
+  width:100%;text-align:left;transition:var(--t);text-decoration:none}
+.item svg{width:17px;height:17px;flex:0 0 auto;opacity:.75}
+.item:hover{background:var(--superficie-2);color:var(--texto)}
+.item.on{background:var(--grad);color:#fff;box-shadow:0 4px 14px rgba(124,58,237,.3)}
+.item.on svg{opacity:1}
+.item .conta{margin-left:auto;font-size:.72rem;background:var(--superficie-3);color:var(--texto-2);
+  padding:1px 8px;border-radius:99px;font-weight:700}
+.item.on .conta{background:rgba(255,255,255,.22);color:#fff}
+
+/* ---------------- conteúdo ---------------- */
+.conteudo{padding:26px clamp(18px,3vw,38px) 60px;min-width:0}
+.cabecalho{display:flex;align-items:flex-start;gap:14px;flex-wrap:wrap;margin-bottom:26px}
+.cabecalho h1{font-size:1.6rem;letter-spacing:-.03em}
+.cabecalho .sub{font-size:.94rem;margin-top:3px}
+.cabecalho-dir{margin-left:auto;display:flex;gap:9px;align-items:center}
+.pagina{display:none;animation:entra .3s both}
+.pagina.on{display:block}
+
+/* cards estatísticos */
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:15px;margin-bottom:22px}
+.stat{background:var(--superficie);border:1px solid var(--borda);border-radius:var(--r-lg);padding:18px;
+  box-shadow:var(--sombra-2);position:relative;overflow:hidden;transition:var(--t)}
+.stat:hover{transform:translateY(-3px);box-shadow:var(--sombra-3)}
+.stat::before{content:"";position:absolute;inset:0 0 auto 0;height:3px;background:var(--cor,var(--marca))}
+.stat-top{display:flex;align-items:center;gap:9px;margin-bottom:11px}
+.stat-ico{width:34px;height:34px;border-radius:10px;display:grid;place-items:center;
+  background:var(--marca-suave);color:var(--cor,var(--marca))}
+.stat-ico svg{width:17px;height:17px}
+.stat-top span{font-size:.79rem;color:var(--apagado);font-weight:600}
+.stat b{font-size:1.95rem;font-weight:780;letter-spacing:-.04em;display:block;line-height:1.1}
+.stat small{font-size:.78rem;color:var(--apagado)}
+
+/* gráficos */
+.graficos{display:grid;grid-template-columns:1fr 1fr;gap:15px;margin-bottom:22px}
+.bloco{background:var(--superficie);border:1px solid var(--borda);border-radius:var(--r-lg);
+  padding:20px;box-shadow:var(--sombra-2)}
+.bloco h3{margin-bottom:3px}
+.bloco .sub{font-size:.83rem;margin-bottom:16px}
+.rosca{display:flex;align-items:center;gap:22px;flex-wrap:wrap}
+.rosca svg{width:150px;height:150px;flex:0 0 auto;transform:rotate(-90deg)}
+.rosca-leg{display:grid;gap:9px;flex:1;min-width:130px}
+.rosca-leg div{display:flex;align-items:center;gap:9px;font-size:.87rem}
+.rosca-leg i{width:10px;height:10px;border-radius:3px;flex:0 0 auto}
+.rosca-leg b{margin-left:auto;font-variant-numeric:tabular-nums}
+.barras{display:grid;gap:13px}
+.barra-linha{display:grid;grid-template-columns:96px 1fr 46px;align-items:center;gap:11px;font-size:.86rem}
+.barra-trilho{height:9px;background:var(--superficie-3);border-radius:99px;overflow:hidden}
+.barra-cheia{height:100%;border-radius:99px;width:0;transition:width .8s cubic-bezier(.2,.8,.3,1)}
+.barra-linha b{text-align:right;font-variant-numeric:tabular-nums;font-size:.85rem}
+
+/* tabela / lista */
+.ferramentas{display:flex;gap:9px;flex-wrap:wrap;margin-bottom:16px}
+.ferramentas input{flex:1;min-width:190px}
+.ferramentas select{width:auto;min-width:150px}
+.chamado{background:var(--superficie);border:1px solid var(--borda);border-radius:var(--r);
+  padding:16px 18px;margin-bottom:11px;transition:var(--t);animation:entra .3s both}
+.chamado:hover{border-color:var(--borda-forte);box-shadow:var(--sombra-2)}
+.ch-topo{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:8px}
+.ch-texto{font-weight:600;letter-spacing:-.01em;margin-bottom:5px}
+.ch-resp{color:var(--apagado);font-size:.9rem;border-left:2px solid var(--borda-forte);
+  padding-left:12px;margin:9px 0;white-space:pre-wrap}
+.ch-meta{display:flex;gap:14px;flex-wrap:wrap;font-size:.79rem;color:var(--apagado);
+  padding-top:10px;border-top:1px dashed var(--borda);font-variant-numeric:tabular-nums}
+.ch-meta b{color:var(--texto);font-weight:650}
+.vazio{text-align:center;padding:54px 22px;color:var(--apagado);background:var(--superficie);
+  border:1px dashed var(--borda-forte);border-radius:var(--r-lg)}
+.vazio svg{width:40px;height:40px;opacity:.28;margin:0 auto 12px}
+.vazio b{display:block;color:var(--texto);font-size:1.02rem;margin-bottom:5px}
+
+/* clientes */
+.clientes{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:14px}
+.cliente{background:var(--superficie);border:1px solid var(--borda);border-radius:var(--r-lg);padding:17px;
+  display:flex;gap:13px;align-items:center;transition:var(--t);box-shadow:var(--sombra-1)}
+.cliente:hover{transform:translateY(-3px);box-shadow:var(--sombra-2);border-color:var(--borda-forte)}
+.avatar{width:42px;height:42px;border-radius:13px;background:var(--grad);color:#fff;display:grid;
+  place-items:center;font-weight:750;font-size:.94rem;flex:0 0 auto}
+.cliente b{display:block;font-size:.95rem;letter-spacing:-.01em}
+.cliente span{font-size:.8rem;color:var(--apagado);word-break:break-all}
+
+/* menu no celular */
+.abre-menu{display:none}
+@media(max-width:900px){
+  .app{grid-template-columns:1fr}
+  .lateral{position:fixed;left:0;top:0;bottom:0;width:250px;z-index:120;transform:translateX(-100%);
+    transition:transform .25s cubic-bezier(.2,.8,.3,1);box-shadow:var(--sombra-3);height:100dvh}
+  .lateral.aberta{transform:none}
+  .abre-menu{display:inline-flex}
+  .veu{position:fixed;inset:0;background:rgba(23,17,36,.5);z-index:110;display:none}
+  .veu.on{display:block}
+  .graficos{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<div class="veu" id="veu"></div>
+<div class="app">
+
+  <!-- ============================ MENU LATERAL -->
+  <aside class="lateral" id="lateral">
+    <a class="marca" href="/">
+      <span class="marca-icone"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg></span>
+      TECH<em>FIX</em>
+    </a>
+
+    <div class="menu-tit">Operação</div>
+    <button class="item on" data-pag="dashboard"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg>Dashboard</button>
+    <button class="item" data-pag="chamados"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>Chamados<span class="conta" id="contaCh">0</span></button>
+    <button class="item" data-pag="clientes"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="9" cy="8" r="4"/><path d="M1 21a8 8 0 0 1 16 0M17 4a4 4 0 0 1 0 8M23 21a7 7 0 0 0-5-6.7"/></svg>Clientes<span class="conta" id="contaCl">0</span></button>
+
+    <div class="menu-tit">Análise</div>
+    <button class="item" data-pag="relatorios"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 3v18h18"/><path d="M7 15l4-4 3 3 5-6"/></svg>Relatórios</button>
+    <button class="item" data-pag="config"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.6 1.6 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.6 1.6 0 0 0-2.7 1.1V21a2 2 0 1 1-4 0v-.1A1.6 1.6 0 0 0 7 19.4l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1A1.6 1.6 0 0 0 3 14a2 2 0 1 1 0-4h.1A1.6 1.6 0 0 0 4.6 7l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1A1.6 1.6 0 0 0 10 4.6V4a2 2 0 1 1 4 0v.1a1.6 1.6 0 0 0 2.7 1.1l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.6 1.6 0 0 0-.3 1.8v.1a1.6 1.6 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.6 1.6 0 0 0-1.5 1z"/></svg>Configurações</button>
+
+    <div style="margin-top:auto;padding-top:20px">
+      <a class="item" href="/"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/></svg>Voltar ao site</a>
+      <a class="item" href="/swagger-ui.html" target="_blank"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M16 18l6-6-6-6M8 6l-6 6 6 6"/></svg>API · Swagger</a>
+      <a class="item" href="/h2-console" target="_blank"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><ellipse cx="12" cy="5" rx="8" ry="3"/><path d="M4 5v14c0 1.7 3.6 3 8 3s8-1.3 8-3V5"/><path d="M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3"/></svg>Banco H2</a>
+    </div>
+  </aside>
+
+  <!-- ============================ CONTEÚDO -->
+  <main class="conteudo">
+    <div class="cabecalho">
+      <button class="bt bt-icone abre-menu" id="abreMenu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M3 6h18M3 12h18M3 18h18"/></svg></button>
+      <div>
+        <h1 id="tituloPag">Olá! 👋</h1>
+        <p class="sub" id="subPag">Acompanhe seus atendimentos na TECHFIX.</p>
+      </div>
+      <div class="cabecalho-dir">
+        <button class="bt bt-icone" data-acao="tema" title="Alternar tema"></button>
+        <button class="bt bt-2" id="btAtualizar">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M21 12a9 9 0 1 1-2.6-6.4M21 3v6h-6"/></svg>
+          Atualizar
+        </button>
+      </div>
+    </div>
+
+    <!-- ---------- DASHBOARD ---------- -->
+    <section class="pagina on" id="pag-dashboard">
+      <div class="stats" id="stats"></div>
+      <div class="graficos">
+        <div class="bloco">
+          <h3>Origem das respostas</h3>
+          <p class="sub">De onde saiu cada resposta entregue ao cliente.</p>
+          <div class="rosca">
+            <svg viewBox="0 0 120 120" id="rosca"></svg>
+            <div class="rosca-leg" id="roscaLeg"></div>
+          </div>
+        </div>
+        <div class="bloco">
+          <h3>Prioridade dos chamados</h3>
+          <p class="sub">Classificação automática feita na triagem.</p>
+          <div class="barras" id="barrasPrio"></div>
+          <h3 style="margin-top:22px">Tempo médio de resposta</h3>
+          <p class="sub">Comparação entre consultar a IA e reaproveitar o cache.</p>
+          <div class="barras" id="barrasTempo"></div>
+        </div>
+      </div>
+      <div class="bloco">
+        <h3>Categorias mais frequentes</h3>
+        <p class="sub">Contagem sobre a classificação da IA de cada chamado.</p>
+        <div class="barras" id="barrasCat"></div>
+      </div>
+    </section>
+
+    <!-- ---------- CHAMADOS ---------- -->
+    <section class="pagina" id="pag-chamados">
+      <div class="ferramentas">
+        <input id="busca" placeholder="Buscar no texto ou na resposta do chamado...">
+        <select id="fCliente"><option value="">Todos os clientes</option></select>
+        <select id="fOrigem"><option value="">Toda origem</option><option>IA</option><option>CACHE</option><option>FALLBACK</option></select>
+        <select id="fPrio"><option value="">Toda prioridade</option><option>ALTA</option><option>MEDIA</option><option>BAIXA</option></select>
+      </div>
+      <div id="listaCh"></div>
+    </section>
+
+    <!-- ---------- CLIENTES ---------- -->
+    <section class="pagina" id="pag-clientes">
+      <div class="bloco" style="margin-bottom:18px">
+        <h3>Cadastrar cliente</h3>
+        <p class="sub">Nome e e-mail. O e-mail não pode se repetir.</p>
+        <form id="formCliente" class="par" style="align-items:end">
+          <div class="campo" style="margin:0"><label for="cNome">Nome</label><input id="cNome" placeholder="Nome completo"></div>
+          <div class="campo" style="margin:0"><label for="cEmail">E-mail</label><input id="cEmail" type="email" placeholder="cliente@email.com"></div>
+          <button class="bt bt-1" type="submit" style="grid-column:1/-1">Cadastrar cliente</button>
+        </form>
+      </div>
+      <div class="clientes" id="listaCl"></div>
+    </section>
+
+    <!-- ---------- RELATÓRIOS ---------- -->
+    <section class="pagina" id="pag-relatorios">
+      <div class="stats" id="statsRel"></div>
+      <div class="bloco">
+        <h3>Regras contra inteligência artificial</h3>
+        <p class="sub">Os dois classificadores leem o mesmo texto de forma independente. Este é o percentual de vezes em que chegaram à mesma categoria.</p>
+        <div class="barras" id="barrasConc"></div>
+      </div>
+      <div class="bloco" style="margin-top:15px">
+        <h3>Consumo de tokens</h3>
+        <p class="sub">Cada token é custo. O cache existe para que a mesma pergunta não seja paga duas vezes.</p>
+        <div class="barras" id="barrasTok"></div>
+      </div>
+    </section>
+
+    <!-- ---------- CONFIGURAÇÕES ---------- -->
+    <section class="pagina" id="pag-config">
+      <div class="bloco" style="max-width:660px">
+        <h3>Aparência</h3>
+        <p class="sub">O tema fica salvo neste navegador.</p>
+        <button class="bt bt-2" data-acao="tema" style="width:auto"></button>
+      </div>
+      <div class="bloco" style="max-width:660px;margin-top:15px">
+        <h3>Sobre esta instalação</h3>
+        <p class="sub">Informações lidas da própria API.</p>
+        <div class="barras" id="infoSis" style="margin-top:14px"></div>
+      </div>
+      <div class="bloco" style="max-width:660px;margin-top:15px">
+        <h3>Privacidade e LGPD</h3>
+        <p class="sub" style="line-height:1.65">As imagens enviadas pelos clientes são analisadas e descritas, mas não ficam armazenadas — apenas a descrição gerada é guardada junto ao chamado. O sistema não executa reconhecimento facial: rosto é dado biométrico, considerado sensível pela LGPD, e não é necessário para o conserto de um aparelho.</p>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<script src="/assets/techfix.js"></script>
+<script>
+(function(){
+  const T = window.TECHFIX, $ = T.$, $$ = T.$$;
+  T.iniciar({ chat:false });
+
+  let CLIENTES = [], CHAMADOS = [], METRICAS = {};
+
+  /* ---------------- navegação ---------------- */
+  const TITULOS = {
+    dashboard:  ['Olá! 👋', 'Acompanhe seus atendimentos na TECHFIX.'],
+    chamados:   ['Seus chamados em um só lugar', 'Tudo o que entrou, com a triagem já aplicada.'],
+    clientes:   ['Clientes', 'Quem já abriu chamado na TECHFIX.'],
+    relatorios: ['Relatórios', 'Os números que a operação precisa acompanhar.'],
+    config:     ['Configurações', 'Preferências desta instalação.']
+  };
+  function irPara(p){
+    $$('.item[data-pag]').forEach(b => b.classList.toggle('on', b.dataset.pag === p));
+    $$('.pagina').forEach(s => s.classList.toggle('on', s.id === 'pag-' + p));
+    $('#tituloPag').textContent = TITULOS[p][0];
+    $('#subPag').textContent    = TITULOS[p][1];
+    fecharMenu();
+    window.scrollTo({ top:0, behavior:'smooth' });
+  }
+  $$('.item[data-pag]').forEach(b => b.onclick = () => irPara(b.dataset.pag));
+
+  function fecharMenu(){ $('#lateral').classList.remove('aberta'); $('#veu').classList.remove('on'); }
+  $('#abreMenu').onclick = () => { $('#lateral').classList.add('aberta'); $('#veu').classList.add('on'); };
+  $('#veu').onclick = fecharMenu;
+
+  /* ---------------- desenho dos gráficos ---------------- */
+  function rosca(dados){
+    const total = dados.reduce((a,d) => a + d.v, 0);
+    const R = 45, C = 2 * Math.PI * R;
+    let acc = 0, svg = '<circle cx="60" cy="60" r="45" fill="none" stroke="var(--superficie-3)" stroke-width="16"/>';
+    if (total > 0){
+      dados.forEach(d => {
+        if (!d.v) return;
+        const frac = d.v / total;
+        svg += '<circle cx="60" cy="60" r="45" fill="none" stroke="' + d.c + '" stroke-width="16"' +
+               ' stroke-dasharray="' + (frac * C).toFixed(2) + ' ' + C.toFixed(2) + '"' +
+               ' stroke-dashoffset="' + (-acc * C).toFixed(2) + '" stroke-linecap="butt"></circle>';
+        acc += frac;
+      });
+    }
+    svg += '<text x="60" y="58" text-anchor="middle" transform="rotate(90 60 60)" ' +
+           'style="font:700 17px sans-serif;fill:var(--texto)">' + total + '</text>' +
+           '<text x="60" y="72" text-anchor="middle" transform="rotate(90 60 60)" ' +
+           'style="font:500 8px sans-serif;fill:var(--apagado);letter-spacing:.1em">CHAMADOS</text>';
+    $('#rosca').innerHTML = svg;
+    $('#roscaLeg').innerHTML = dados.map(d =>
+      '<div><i style="background:' + d.c + '"></i>' + d.k +
+      '<b>' + d.v + (total ? ' · ' + Math.round(d.v / total * 100) + '%' : '') + '</b></div>').join('');
+  }
+
+  function barras(alvo, dados, sufixo){
+    const max = Math.max(1, ...dados.map(d => d.v));
+    $(alvo).innerHTML = dados.map(d =>
+      '<div class="barra-linha"><span>' + T.escapar(d.k) + '</span>' +
+      '<span class="barra-trilho"><i class="barra-cheia" style="background:' + d.c + '"></i></span>' +
+      '<b>' + (d.rotulo != null ? d.rotulo : d.v) + (sufixo || '') + '</b></div>').join('');
+    requestAnimationFrame(() => {
+      $$(alvo + ' .barra-cheia').forEach((el, i) => { el.style.width = (dados[i].v / max * 100) + '%'; });
+    });
+  }
+
+  /* ---------------- carregar tudo ---------------- */
+  async function carregar(){
+    try {
+      CLIENTES = await T.api('/api/usuarios');
+    } catch (e) { CLIENTES = []; T.avisar('Não consegui falar com a API: ' + e.message, true); }
+
+    const listas = await Promise.all(CLIENTES.map(u =>
+      T.api('/api/usuarios/' + u.id + '/tickets').catch(() => [])));
+    CHAMADOS = listas.flat().sort((a, b) => b.id - a.id);
+
+    try { METRICAS = await T.api('/api/metricas'); } catch (e) { METRICAS = {}; }
+
+    $('#contaCh').textContent = CHAMADOS.length;
+    $('#contaCl').textContent = CLIENTES.length;
+
+    pintarDashboard();
+    pintarFiltros();
+    pintarChamados();
+    pintarClientes();
+    pintarRelatorios();
+    pintarConfig();
+  }
+
+  /* ---------------- dashboard ---------------- */
+  const IC = {
+    total:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>',
+    ia:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M12 3l1.9 4.8L18.7 9.7l-4.8 1.9L12 16.4l-1.9-4.8L5.3 9.7l4.8-1.9z"/></svg>',
+    cache:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M13 2L3 14h8l-1 8 10-12h-8z"/></svg>',
+    alerta:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M10.3 3.9L1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><path d="M12 9v4M12 17h.01"/></svg>'
+  };
+  function stat(cor, ico, rotulo, valor, nota){
+    return '<div class="stat" style="--cor:' + cor + '">' +
+      '<div class="stat-top"><span class="stat-ico">' + ico + '</span><span>' + rotulo + '</span></div>' +
+      '<b class="num">' + valor + '</b>' + (nota ? '<small>' + nota + '</small>' : '') + '</div>';
+  }
+  function pintarDashboard(){
+    const m = METRICAS;
+    $('#stats').innerHTML =
+      stat('var(--marca)',  IC.total, 'Chamados abertos', CHAMADOS.length, 'total registrado no banco') +
+      stat('var(--ia)',     IC.ia,    'Triados pela IA',  m.respondidosPelaIa || 0, 'resposta gerada pelo modelo') +
+      stat('var(--cache)',  IC.cache, 'Vindos do cache',  m.respondidosPeloCache || 0, 'sem custo de token') +
+      stat('var(--fallback)', IC.alerta, 'Em fallback',   m.fallbacks || 0, 'IA indisponível no momento');
+
+    rosca([
+      { k:'IA',       v:m.respondidosPelaIa || 0,    c:'var(--ia)' },
+      { k:'Cache',    v:m.respondidosPeloCache || 0, c:'var(--cache)' },
+      { k:'Fallback', v:m.fallbacks || 0,            c:'var(--fallback)' }
+    ]);
+
+    barras('#barrasPrio', [
+      { k:'Alta',  v:m.prioridadeAlta  || 0, c:'var(--alta)' },
+      { k:'Média', v:m.prioridadeMedia || 0, c:'var(--media)' },
+      { k:'Baixa', v:m.prioridadeBaixa || 0, c:'var(--baixa)' }
+    ]);
+
+    const tIa = Math.round(m.tempoMedioIaMs || 0), tCa = Math.round(m.tempoMedioCacheMs || 0);
+    barras('#barrasTempo', [
+      { k:'Via IA',    v:tIa, c:'var(--ia)',    rotulo:tIa },
+      { k:'Via cache', v:tCa, c:'var(--cache)', rotulo:tCa }
+    ], ' ms');
+
+    const contagem = {};
+    CHAMADOS.forEach(t => {
+      const c = (t.categoriaIa || t.categoriaRegras || 'sem categoria').toLowerCase();
+      contagem[c] = (contagem[c] || 0) + 1;
+    });
+    const cats = Object.keys(contagem).sort((a, b) => contagem[b] - contagem[a]).slice(0, 6);
+    barras('#barrasCat', cats.length
+      ? cats.map(c => ({ k:c, v:contagem[c], c:'var(--marca)' }))
+      : [{ k:'nenhum chamado', v:0, c:'var(--borda-forte)' }]);
+  }
+
+  /* ---------------- chamados ---------------- */
+  function pintarFiltros(){
+    const sel = $('#fCliente'), atual = sel.value;
+    sel.innerHTML = '<option value="">Todos os clientes</option>' +
+      CLIENTES.map(u => '<option value="' + u.id + '">' + T.escapar(u.nome) + '</option>').join('');
+    sel.value = atual;
+  }
+  function cartaoChamado(t){
+    const s = T.situacao(t), ok = T.concorda(t);
+    const cli = CLIENTES.find(u => u.id === t.usuarioId);
+    return '<article class="chamado">' +
+      '<div class="ch-topo">' +
+        '<b class="mono" style="font-size:.84rem;color:var(--marca)">' + T.protocolo(t.id) + '</b>' +
+        '<span class="tag ' + t.origem + '">' + t.origem + '</span>' +
+        '<span class="tag tag-v ' + t.prioridade + '">' + t.prioridade + '</span>' +
+        (t.categoriaIa ? '<span class="tag tag-v ' + (ok ? 'BAIXA' : 'MEDIA') + '" style="color:' +
+          (ok ? 'var(--ok)' : 'var(--fallback)') + ';border-color:' + (ok ? 'var(--ok)' : 'var(--fallback)') + '">' +
+          (ok ? 'regras e IA concordam' : 'regras e IA divergem') + '</span>' : '') +
+        '<span style="margin-left:auto;font-size:.79rem;color:var(--apagado)">' + T.quando(t.dataHora) + '</span>' +
+      '</div>' +
+      '<div class="ch-texto">' + T.escapar(t.texto) + '</div>' +
+      (t.resposta ? '<div class="ch-resp">' + T.escapar(t.resposta) + '</div>' : '') +
+      (t.descricaoAnexo ? '<div class="ch-resp" style="border-left-color:var(--lilas)"><b>Imagem:</b> ' + T.escapar(t.descricaoAnexo) + '</div>' : '') +
+      '<div class="ch-meta">' +
+        '<span style="color:' + s.cor + ';font-weight:650">' + s.txt + '</span>' +
+        '<span>cliente: <b>' + T.escapar(cli ? cli.nome : '#' + t.usuarioId) + '</b></span>' +
+        '<span>regras: <b>' + T.escapar(t.categoriaRegras || '-') + '</b></span>' +
+        '<span>IA: <b>' + T.escapar(t.categoriaIa || '-') + '</b></span>' +
+        '<span><b>' + t.tempoMs + '</b> ms</span>' +
+        '<span><b>' + (t.tokensEntrada + t.tokensSaida) + '</b> tokens</span>' +
+        (t.provedor ? '<span>' + T.escapar(t.provedor) + (t.modelo ? ' · ' + T.escapar(t.modelo) : '') + '</span>' : '') +
+      '</div>' +
+    '</article>';
+  }
+  function pintarChamados(){
+    const q = $('#busca').value.toLowerCase(), cl = $('#fCliente').value,
+          o = $('#fOrigem').value, p = $('#fPrio').value;
+    const f = CHAMADOS.filter(t =>
+      (!q  || (t.texto || '').toLowerCase().includes(q) || (t.resposta || '').toLowerCase().includes(q)) &&
+      (!cl || String(t.usuarioId) === cl) && (!o || t.origem === o) && (!p || t.prioridade === p));
+    $('#listaCh').innerHTML = f.length ? f.map(cartaoChamado).join('') :
+      '<div class="vazio"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>' +
+      '<b>' + (CHAMADOS.length ? 'Nenhum chamado com esses filtros' : 'Nenhum chamado ainda') + '</b>' +
+      (CHAMADOS.length ? 'Ajuste a busca ou os filtros acima.' : 'Abra o primeiro chamado pela página inicial do site.') + '</div>';
+  }
+  ['busca','fCliente','fOrigem','fPrio'].forEach(id => { $('#' + id).oninput = pintarChamados; });
+
+  /* ---------------- clientes ---------------- */
+  function pintarClientes(){
+    $('#listaCl').innerHTML = CLIENTES.length ? CLIENTES.map(u => {
+      const qtd = CHAMADOS.filter(t => t.usuarioId === u.id).length;
+      const ini = (u.nome || '?').trim().split(/\s+/).slice(0,2).map(x => x[0]).join('').toUpperCase();
+      return '<div class="cliente"><span class="avatar">' + T.escapar(ini) + '</span>' +
+        '<span style="min-width:0"><b>' + T.escapar(u.nome) + '</b><span>' + T.escapar(u.email) + '</span>' +
+        '<span style="color:var(--marca);font-weight:650">' + qtd + (qtd === 1 ? ' chamado' : ' chamados') + '</span></span></div>';
+    }).join('') : '<div class="vazio"><b>Nenhum cliente cadastrado</b>Use o formulário acima para criar o primeiro.</div>';
+  }
+  $('#formCliente').addEventListener('submit', async ev => {
+    ev.preventDefault();
+    const nome = $('#cNome').value.trim(), email = $('#cEmail').value.trim();
+    if (!nome || !email) return T.avisar('Preencha nome e e-mail.', true);
+    try {
+      const u = await T.api('/api/usuarios', 'POST', { nome:nome, email:email });
+      $('#cNome').value = $('#cEmail').value = '';
+      T.avisar('Cliente ' + u.nome + ' cadastrado.');
+      carregar();
+    } catch (e) { T.avisar(e.message, true); }
+  });
+
+  /* ---------------- relatórios ---------------- */
+  function pintarRelatorios(){
+    const m = METRICAS;
+    $('#statsRel').innerHTML =
+      stat('var(--marca)', IC.total, 'Total de chamados', m.totalTickets || 0) +
+      stat('var(--cache)', IC.cache, 'Aproveitamento do cache', (m.taxaCacheHitPercentual || 0) + '%', 'quanto maior, menor o custo') +
+      stat('var(--ia)',    IC.ia,    'Concordância regras × IA', (m.concordanciaRegrasIaPercentual || 0) + '%') +
+      stat('var(--fallback)', IC.alerta, 'Tokens consumidos', m.totalTokens || 0);
+
+    const conc = m.concordanciaRegrasIaPercentual || 0;
+    barras('#barrasConc', [
+      { k:'Concordaram', v:conc,       c:'var(--ok)',       rotulo:conc },
+      { k:'Divergiram',  v:100 - conc, c:'var(--fallback)', rotulo:(100 - conc).toFixed(1) }
+    ], '%');
+
+    const ia = m.respondidosPelaIa || 0, ca = m.respondidosPeloCache || 0;
+    barras('#barrasTok', [
+      { k:'Pagos à IA',      v:ia, c:'var(--ia)' },
+      { k:'Evitados (cache)', v:ca, c:'var(--cache)' }
+    ], ' chamados');
+  }
+
+  /* ---------------- configurações ---------------- */
+  function pintarConfig(){
+    const m = METRICAS, prov = (CHAMADOS.find(t => t.provedor) || {});
+    const info = [
+      { k:'Provedor de IA', v:prov.provedor || 'ainda não usado' },
+      { k:'Modelo',         v:prov.modelo   || '—' },
+      { k:'Clientes',       v:CLIENTES.length },
+      { k:'Chamados',       v:CHAMADOS.length },
+      { k:'Tokens totais',  v:m.totalTokens || 0 }
+    ];
+    $('#infoSis').innerHTML = info.map(i =>
+      '<div class="barra-linha" style="grid-template-columns:150px 1fr">' +
+      '<span>' + i.k + '</span><b style="text-align:left">' + T.escapar(String(i.v)) + '</b></div>').join('');
+  }
+
+  /* ---------------- arranque ---------------- */
+  $('#btAtualizar').onclick = () => { carregar(); T.avisar('Dados atualizados.'); };
+  carregar();
+})();
+</script>
+</body>
+</html>

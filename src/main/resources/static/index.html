@@ -354,6 +354,7 @@
           <label for="fTexto">O que está acontecendo?</label>
           <textarea id="fTexto" placeholder="Ex.: meu notebook liga, mas a tela fica preta desde ontem. É urgente, preciso dele para trabalhar." required></textarea>
           <div class="dica"><span id="contador">0</span>/4000 caracteres · Ctrl + Enter envia</div>
+          <div class="chips" id="chips"></div>
         </div>
 
         <div class="campo">
@@ -496,6 +497,26 @@
     T.$$('#escolhas .escolha').forEach(x => x.setAttribute('aria-pressed', 'false'));
     b.setAttribute('aria-pressed', 'true');
     equipamento = b.dataset.eq;
+  });
+
+  /* ---------- exemplos de demonstracao (chips) ---------- */
+  const EXEMPLOS = [
+    ['Suporte · ALTA', 'Meu notebook nao liga, e urgente, preciso dele para trabalhar!'],
+    ['Orçamento',      'Quanto custa a troca da tela de um celular?'],
+    ['Prazo',          'Em quantos dias uteis fica pronto o conserto?'],
+    ['Garantia',       'Voces consertaram e voltou a dar o mesmo defeito, ainda esta na garantia?'],
+    ['Fora do escopo', 'Me da uma receita de bolo de cenoura'],
+    ['Testar o cache', 'VOCES TROCAM TELA??']
+  ];
+  $('#chips').innerHTML = EXEMPLOS
+    .map((e, i) => '<button type="button" class="chip" data-i="' + i + '">' + T.escapar(e[0]) + '</button>')
+    .join('');
+  $('#chips').addEventListener('click', ev => {
+    const b = ev.target.closest('.chip');
+    if (!b) return;
+    $('#fTexto').value = EXEMPLOS[b.dataset.i][1];
+    $('#contador').textContent = $('#fTexto').value.length;
+    $('#fTexto').focus();
   });
 
   /* ---------- contador ---------- */
